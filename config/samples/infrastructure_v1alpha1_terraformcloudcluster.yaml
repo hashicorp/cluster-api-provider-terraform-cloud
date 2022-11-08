@@ -1,0 +1,12 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: TerraformCloudCluster
+metadata:
+  labels:
+    app.kubernetes.io/name: terraformcloudcluster
+    app.kubernetes.io/instance: terraformcloudcluster-sample
+    app.kubernetes.io/part-of: cluster-api-provider-terraform-cloud
+    app.kuberentes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: cluster-api-provider-terraform-cloud
+  name: terraformcloudcluster-sample
+spec:
+  # TODO(user): Add fields here

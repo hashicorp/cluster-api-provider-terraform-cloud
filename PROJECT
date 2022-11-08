@@ -3,4 +3,14 @@ layout:
 - go.kubebuilder.io/v3
 projectName: cluster-api-provider-terraform-cloud
 repo: github.com/hashicorp/cluster-api-provider-terraform-cloud
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: cluster.x-k8s.io
+  group: infrastructure
+  kind: TerraformCloudCluster
+  path: github.com/hashicorp/cluster-api-provider-terraform-cloud/api/v1alpha1
+  version: v1alpha1
 version: "3"

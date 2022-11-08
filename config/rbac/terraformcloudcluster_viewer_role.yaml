@@ -1,0 +1,27 @@
+# permissions for end users to view terraformcloudclusters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: terraformcloudcluster-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: cluster-api-provider-terraform-cloud
+    app.kubernetes.io/part-of: cluster-api-provider-terraform-cloud
+    app.kubernetes.io/managed-by: kustomize
+  name: terraformcloudcluster-viewer-role
+rules:
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - terraformcloudclusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - terraformcloudclusters/status
+  verbs:
+  - get
