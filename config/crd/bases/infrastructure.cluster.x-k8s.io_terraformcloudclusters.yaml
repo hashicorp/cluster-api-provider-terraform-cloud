@@ -15,7 +15,20 @@ spec:
     singular: terraformcloudcluster
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.version
+      name: Version
+      type: string
+    - jsonPath: .spec.workspace
+      name: Organization
+      type: string
+    - jsonPath: .spec.organization
+      name: Workspace
+      type: string
+    - jsonPath: .status.terraform.runStatus
+      name: Run Status
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: TerraformCloudCluster is the Schema for the terraformcloudclusters
@@ -36,14 +49,132 @@ spec:
           spec:
             description: TerraformCloudClusterSpec defines the desired state of TerraformCloudCluster
             properties:
-              foo:
-                description: Foo is an example field of TerraformCloudCluster. Edit
-                  terraformcloudcluster_types.go to remove/update
+              autoApply:
+                description: AutoApply configures if plans should be applied straight
+                  away or manually approved in the Terraform Cloud UI
+                type: boolean
+              controlPlaneEndpoint:
+                description: ControlPlaneEndpoint is the endpoint for the control
+                  plane
+                properties:
+                  host:
+                    description: The hostname on which the API server is serving.
+                    type: string
+                  port:
+                    description: The port on which the API server is serving.
+                    format: int32
+                    type: integer
+                required:
+                - host
+                - port
+                type: object
+              module:
+                description: Module is the Terraform module to use for provisioning
+                  the Kubernetes Cluster
+                properties:
+                  source:
+                    description: Source is the Terraform Registry or HTTP URL of the
+                      module source
+                    type: string
+                  version:
+                    description: Version is the semantic version of the Terraform
+                      Module
+                    type: string
+                required:
+                - source
+                - version
+                type: object
+              organization:
+                description: Organization is the name of the Terraform Cloud organization
+                  to use
                 type: string
+              token:
+                description: Token is the API token for accessing Terraform Cloud
+                properties:
+                  secretKeyRef:
+                    description: Selects a key of a secret in the workspace's namespace
+                    properties:
+                      key:
+                        description: The key of the secret to select from.  Must be
+                          a valid secret key.
+                        type: string
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                      optional:
+                        description: Specify whether the Secret or its key must be
+                          defined
+                        type: boolean
+                    required:
+                    - key
+                    type: object
+                    x-kubernetes-map-type: atomic
+                required:
+                - secretKeyRef
+                type: object
+              variables:
+                description: Variables is the list of variables to supply to the Terraform
+                  module which creates the Kubernetes Cluster
+                items:
+                  description: Variable is a Terraform Variable
+                  properties:
+                    name:
+                      description: Name is the name of the variable
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+              version:
+                description: Version is the Kubernetes cluster version to provision
+                type: string
+              workspace:
+                description: 'Workspace is the name of the Terraform Cloud Workspace
+                  to execute the terraform run in TODO: change this to a struct that
+                  supports ID or name'
+                type: string
+            required:
+            - autoApply
+            - module
+            - organization
+            - token
+            - variables
+            - version
+            - workspace
             type: object
           status:
             description: TerraformCloudClusterStatus defines the observed state of
               TerraformCloudCluster
+            properties:
+              initialized:
+                type: boolean
+              ready:
+                default: false
+                type: boolean
+              terraform:
+                description: TerraformStatus defines status information about the
+                  terraform workspace
+                properties:
+                  configurationHash:
+                    type: string
+                  configurationVersionID:
+                    type: string
+                  runFinishedAt:
+                    format: date-time
+                    type: string
+                  runID:
+                    description: subresource for TerraformRun
+                    type: string
+                  runStartedAt:
+                    format: date-time
+                    type: string
+                  runStatus:
+                    type: string
+                type: object
+            required:
+            - initialized
+            - ready
             type: object
         type: object
     served: true
