@@ -5,14 +5,14 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
-  name: terraformcloudclusters.infrastructure.cluster.x-k8s.io
+  name: tfcmanagedcontrolplanes.infrastructure.cluster.x-k8s.io
 spec:
   group: infrastructure.cluster.x-k8s.io
   names:
-    kind: TerraformCloudCluster
-    listKind: TerraformCloudClusterList
-    plural: terraformcloudclusters
-    singular: terraformcloudcluster
+    kind: TFCManagedControlPlane
+    listKind: TFCManagedControlPlaneList
+    plural: tfcmanagedcontrolplanes
+    singular: tfcmanagedcontrolplane
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -31,7 +31,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: TerraformCloudCluster is the Schema for the terraformcloudclusters
+        description: TFCManagedControlPlane is the Schema for the tfcmanagedcontrolplanes
           API
         properties:
           apiVersion:
@@ -47,7 +47,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: TerraformCloudClusterSpec defines the desired state of TerraformCloudCluster
+            description: TFCManagedControlPlaneSpec defines the desired state of TFCManagedControlPlane
             properties:
               autoApply:
                 description: AutoApply configures if plans should be applied straight
@@ -144,8 +144,8 @@ spec:
             - workspace
             type: object
           status:
-            description: TerraformCloudClusterStatus defines the observed state of
-              TerraformCloudCluster
+            description: TFCManagedControlPlaneStatus defines the observed state of
+              TFCManagedControlPlane
             properties:
               initialized:
                 type: boolean

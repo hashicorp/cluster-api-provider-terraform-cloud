@@ -48,8 +48,8 @@ type Token struct {
 	SecretKeyRef *corev1.SecretKeySelector `json:"secretKeyRef"`
 }
 
-// TerraformCloudClusterSpec defines the desired state of TerraformCloudCluster
-type TerraformCloudClusterSpec struct {
+// TFCManagedControlPlaneSpec defines the desired state of TFCManagedControlPlane
+type TFCManagedControlPlaneSpec struct {
 	// Organization is the name of the Terraform Cloud organization to use
 	Organization string `json:"organization"`
 
@@ -76,8 +76,8 @@ type TerraformCloudClusterSpec struct {
 	ControlPlaneEndpoint clusterv1beta1.APIEndpoint `json:"controlPlaneEndpoint,omitempty"`
 }
 
-// TerraformCloudClusterStatus defines the observed state of TerraformCloudCluster
-type TerraformCloudClusterStatus struct {
+// TFCManagedControlPlaneStatus defines the observed state of TFCManagedControlPlane
+type TFCManagedControlPlaneStatus struct {
 	// +kubebuilder:default=false
 	Ready       bool            `json:"ready"`
 	Initialized bool            `json:"initialized"`
@@ -102,24 +102,24 @@ type TerraformStatus struct {
 //+kubebuilder:printcolumn:name="Workspace",type=string,JSONPath=`.spec.organization`
 //+kubebuilder:printcolumn:name="Run Status",type=string,JSONPath=`.status.terraform.runStatus`
 
-// TerraformCloudCluster is the Schema for the terraformcloudclusters API
-type TerraformCloudCluster struct {
+// TFCManagedControlPlane is the Schema for the tfcmanagedcontrolplanes API
+type TFCManagedControlPlane struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   TerraformCloudClusterSpec   `json:"spec,omitempty"`
-	Status TerraformCloudClusterStatus `json:"status,omitempty"`
+	Spec   TFCManagedControlPlaneSpec   `json:"spec,omitempty"`
+	Status TFCManagedControlPlaneStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// TerraformCloudClusterList contains a list of TerraformCloudCluster
-type TerraformCloudClusterList struct {
+// TFCManagedControlPlaneList contains a list of TFCManagedControlPlane
+type TFCManagedControlPlaneList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []TerraformCloudCluster `json:"items"`
+	Items           []TFCManagedControlPlane `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&TerraformCloudCluster{}, &TerraformCloudClusterList{})
+	SchemeBuilder.Register(&TFCManagedControlPlane{}, &TFCManagedControlPlaneList{})
 }

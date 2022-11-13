@@ -94,11 +94,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.TerraformCloudClusterReconciler{
+	if err = (&controllers.TFCManagedControlPlaneReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "TerraformCloudCluster")
+		setupLog.Error(err, "unable to create controller", "controller", "TFCManagedControlPlane")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

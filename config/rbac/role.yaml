@@ -17,7 +17,7 @@ rules:
 - apiGroups:
   - infrastructure.cluster.x-k8s.io
   resources:
-  - terraformcloudclusters
+  - tfcmanagedcontrolplanes
   verbs:
   - create
   - delete
@@ -29,13 +29,13 @@ rules:
 - apiGroups:
   - infrastructure.cluster.x-k8s.io
   resources:
-  - terraformcloudclusters/finalizers
+  - tfcmanagedcontrolplanes/finalizers
   verbs:
   - update
 - apiGroups:
   - infrastructure.cluster.x-k8s.io
   resources:
-  - terraformcloudclusters/status
+  - tfcmanagedcontrolplanes/status
   verbs:
   - get
   - patch

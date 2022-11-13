@@ -10,7 +10,7 @@ resources:
   controller: true
   domain: cluster.x-k8s.io
   group: infrastructure
-  kind: TerraformCloudCluster
+  kind: TFCManagedControlPlane
   path: github.com/hashicorp/cluster-api-provider-terraform-cloud/api/v1alpha1
   version: v1alpha1
 version: "3"

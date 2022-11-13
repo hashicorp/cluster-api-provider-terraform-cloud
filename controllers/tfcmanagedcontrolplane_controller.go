@@ -41,17 +41,17 @@ import (
 	tfc "github.com/hashicorp/go-tfe"
 )
 
-const terraformCloudClusterFinalizer = "infrastructure.cluster.x-k8s.io/terraform-cloud-cluster"
+const tfcManagedControlPlaneFinalizer = "infrastructure.cluster.x-k8s.io/tfc-managed-control-plane"
 
-// TerraformCloudClusterReconciler reconciles a TerraformCloudCluster object
-type TerraformCloudClusterReconciler struct {
+// TFCManagedControlPlaneReconciler reconciles a TFCManagedControlPlane object
+type TFCManagedControlPlaneReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=terraformcloudclusters,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=terraformcloudclusters/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=terraformcloudclusters/finalizers,verbs=update
+//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=tfcmanagedcontrolplanes,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=tfcmanagedcontrolplanes/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=tfcmanagedcontrolplanes/finalizers,verbs=update
 //+kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters;clusters/status,verbs=get;list;watch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -59,18 +59,18 @@ type TerraformCloudClusterReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
-func (r *TerraformCloudClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *TFCManagedControlPlaneReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 	logger.Info("Reconciling Terraform Cloud Cluster")
 
-	// get the TerraformCloudCluster object
-	var cluster infrastructurev1alpha1.TerraformCloudCluster
+	// get the TFCManagedControlPlane object
+	var cluster infrastructurev1alpha1.TFCManagedControlPlane
 	if err := r.Get(ctx, req.NamespacedName, &cluster); err != nil {
 		if apierrors.IsNotFound(err) {
-			logger.Info("TerraformCloudCluster has been deleted")
+			logger.Info("TFCManagedControlPlane has been deleted")
 			return ctrl.Result{}, nil
 		}
-		logger.Error(err, "Could not locate TerraformCloudCluster", "name", req.Name)
+		logger.Error(err, "Could not locate TFCManagedControlPlane", "name", req.Name)
 		return ctrl.Result{}, err
 	}
 
@@ -82,7 +82,7 @@ func (r *TerraformCloudClusterReconciler) Reconcile(ctx context.Context, req ctr
 	}
 
 	// add controller finalizer
-	addFinalizer(ctx, r.Client, &cluster, terraformCloudClusterFinalizer)
+	addFinalizer(ctx, r.Client, &cluster, tfcManagedControlPlaneFinalizer)
 
 	// TODO: trigger new run when spec is changed
 
@@ -114,7 +114,7 @@ func (r *TerraformCloudClusterReconciler) Reconcile(ctx context.Context, req ctr
 	// run a destroy if the Kubernetes resource is deleted
 	// TODO: move this into a reconcileDelete() function
 	if !cluster.ObjectMeta.DeletionTimestamp.IsZero() {
-		if controllerutil.ContainsFinalizer(&cluster, terraformCloudClusterFinalizer) {
+		if controllerutil.ContainsFinalizer(&cluster, tfcManagedControlPlaneFinalizer) {
 			logger.Info("Resource is deleted, triggering destroy")
 
 			// trigger destroy run
@@ -140,7 +140,7 @@ func (r *TerraformCloudClusterReconciler) Reconcile(ctx context.Context, req ctr
 			}
 
 			// TODO: wait until the destroy plan has completed
-			controllerutil.RemoveFinalizer(&cluster, terraformCloudClusterFinalizer)
+			controllerutil.RemoveFinalizer(&cluster, tfcManagedControlPlaneFinalizer)
 			err = r.Client.Update(ctx, &cluster)
 			if err != nil {
 				logger.Error(err, "Error removing finalizer")
@@ -297,8 +297,8 @@ func (r *TerraformCloudClusterReconciler) Reconcile(ctx context.Context, req ctr
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *TerraformCloudClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *TFCManagedControlPlaneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&infrastructurev1alpha1.TerraformCloudCluster{}).
+		For(&infrastructurev1alpha1.TFCManagedControlPlane{}).
 		Complete(r)
 }
