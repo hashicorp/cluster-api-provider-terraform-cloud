@@ -1,0 +1,12 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: TFCManagedMachinePool
+metadata:
+  labels:
+    app.kubernetes.io/name: tfcmanagedmachinepool
+    app.kubernetes.io/instance: tfcmanagedmachinepool-sample
+    app.kubernetes.io/part-of: cluster-api-provider-terraform-cloud
+    app.kuberentes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: cluster-api-provider-terraform-cloud
+  name: tfcmanagedmachinepool-sample
+spec:
+  # TODO(user): Add fields here
