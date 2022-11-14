@@ -1,3 +1,7 @@
+<a href="https://cloud.hashicorp.com/products/terraform">
+    <img src=".github/tf_logo.png" alt="Terraform logo" title="Terraform Cloud" align="left" height="50" />
+</a>
+
 # Kubernetes Cluster API Provider for Terraform Cloud
 
 > **Warning**
