@@ -1,14 +1,6 @@
-package controllers
+package terraform
 
-import (
-	"crypto/md5"
-	"fmt"
-	"html/template"
-	"io"
-	"os"
-)
-
-const managedClusterConfigurationTemplate = `
+const ManagedClusterConfigurationTemplate = `
 {{- if .Object.Spec.Variables }}
   {{ range $v := .Object.Spec.Variables }}
 variable "{{ $v.Name }}" {}
@@ -26,6 +18,7 @@ module "cluster" {
   {{- end }}
 {{- end }}
 
+  cluster_name       = "{{ .Owner.ObjectMeta.Name }}"
   kubernetes_version = "{{ .Object.Spec.Version }}"
 
 {{- if .Owner.Spec.ClusterNetwork }}
@@ -69,60 +62,3 @@ output "kubeconfig" {
 	value = module.cluster.kubeconfig
   }
 `
-
-const managedMachinePoolConfigurationTemplate = `
-{{- if .Object.Spec.Variables }}
-  {{ range $v := .Object.Spec.Variables }}
-variable "{{ $v.Name }}" {}
-  {{- end}}
-{{- end }}
-
-module "machine_pool" {
-  source = "{{ .Object.Spec.Module.Source }}"
-{{- if .Object.Spec.Module.Version }}
-  version = "{{ .Object.Spec.Module.Version }}"
-{{- end }}
-{{- if .Object.Spec.Variables }}
-  {{ range $v := .Object.Spec.Variables }}
-    {{ $v.Name }} = var.{{ $v.Name }}
-  {{- end }}
-{{- end }}
-
-  replicas = {{ .Owner.Spec.Replicas }}
-}
-
-output "provider_id_list" {
-  value = module.machine_pool.provider_id_list
-}
-`
-
-func createTerraformConfiguration(tpl string, objectData any, ownerObjectData any) (string, string, error) {
-	td, err := os.MkdirTemp("", "tf-*")
-	if err != nil {
-		return "", "", err
-	}
-	f, err := os.CreateTemp(td, "*.tf")
-	if err != nil {
-		return "", "", err
-	}
-
-	t, err := template.New("module").Parse(tpl)
-	if err != nil {
-		return "", "", err
-	}
-	err = t.Execute(f, struct{ Object, Owner any }{
-		Object: objectData,
-		Owner:  ownerObjectData,
-	})
-	if err != nil {
-		return "", "", err
-	}
-
-	// create hash of the config
-	h := md5.New()
-	f.Seek(0, io.SeekStart)
-	if _, err := io.Copy(h, f); err != nil {
-		return "", "", err
-	}
-	return td, fmt.Sprintf("%x", h.Sum(nil)), nil
-}

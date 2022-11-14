@@ -36,6 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	infrastructurev1alpha1 "github.com/hashicorp/cluster-api-provider-terraform-cloud/api/v1alpha1"
+	"github.com/hashicorp/cluster-api-provider-terraform-cloud/terraform"
 	"github.com/hashicorp/go-tfe"
 
 	tfc "github.com/hashicorp/go-tfe"
@@ -153,8 +154,7 @@ func (r *TFCManagedControlPlaneReconciler) Reconcile(ctx context.Context, req ct
 	}
 
 	// generate the Terraform config
-	logger.Info("Generating Terraform Configuration")
-	terraformConfigPath, configHash, err := createTerraformConfiguration(managedClusterConfigurationTemplate, &cluster, &ownerCluster)
+	terraformConfigPath, configHash, err := terraform.CreateConfiguration(terraform.ManagedClusterConfigurationTemplate, &cluster, &ownerCluster)
 	defer os.RemoveAll(terraformConfigPath)
 	if err != nil {
 		logger.Error(err, "Error generating Terraform configuration")
