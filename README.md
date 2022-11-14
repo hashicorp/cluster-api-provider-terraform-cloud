@@ -1,14 +1,29 @@
-# cluster-api-provider-terraform-cloud
-// TODO(user): Add simple overview of use/purpose
+# Kubernetes Cluster API Provider for Terraform Cloud
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+> **Warning**
+> Please note that this is a technical preview and is for experimental purposes only 
+
+Kubernetes-native declarative infrastructure using Terraform Cloud.
+
+## What is the Cluster API Provider for Terraform Cloud?
+
+The [Cluster API](https://github.com/kubernetes-sigs/cluster-apiterra) project brings declarative Kubernetes-style APIs to cluster creation, configuration and management. This provider allows you to create [Terraform Modules](https://developer.hashicorp.com/terraform/language/modules) to implement Cluster API's contracts and run them in [Terraform Cloud](https://cloud.hashicorp.com/products/terraform) to provision the infrastructure using Kubernetes as your source of truth.  
+
+## Supported Cluster API contracts
+
+The provider currently implements the contracts that allow the infrastructure for managed clusters and machine pools to be provisioned. 
+
+- [Cluster](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/cluster.html) and [Control Plane](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/control-plane.html) are fulfilled by TFCManagedControlPlane  
+- [MachinePool](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/machine-pool.html) is fulfilled by TFCManagedMachinePool 
+
 
 ## Getting Started
+
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
 **Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
 
 ### Running on the cluster
+
 1. Install Instances of Custom Resources:
 
 ```sh
@@ -28,6 +43,7 @@ make deploy IMG=<some-registry>/cluster-api-provider-terraform-cloud:tag
 ```
 
 ### Uninstall CRDs
+
 To delete the CRDs from the cluster:
 
 ```sh
@@ -42,6 +58,7 @@ make undeploy
 ```
 
 ## Contributing
+
 // TODO(user): Add detailed information on how you would like others to contribute to this project
 
 ### How it works
