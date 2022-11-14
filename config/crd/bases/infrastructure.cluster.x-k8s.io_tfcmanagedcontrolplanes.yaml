@@ -25,6 +25,12 @@ spec:
     - jsonPath: .spec.organization
       name: Workspace
       type: string
+    - jsonPath: .spec.module.source
+      name: Module
+      type: string
+    - jsonPath: .spec.module.version
+      name: Module Version
+      type: string
     - jsonPath: .status.terraform.runStatus
       name: Run Status
       type: string

@@ -15,7 +15,23 @@ spec:
     singular: tfcmanagedmachinepool
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.workspace
+      name: Organization
+      type: string
+    - jsonPath: .spec.organization
+      name: Workspace
+      type: string
+    - jsonPath: .spec.module.source
+      name: Module
+      type: string
+    - jsonPath: .spec.module.version
+      name: Module Version
+      type: string
+    - jsonPath: .status.terraform.runStatus
+      name: Run Status
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: TFCManagedMachinePool is the Schema for the tfcmanagedmachinepools
@@ -36,14 +52,113 @@ spec:
           spec:
             description: TFCManagedMachinePoolSpec defines the desired state of TFCManagedMachinePool
             properties:
-              foo:
-                description: Foo is an example field of TFCManagedMachinePool. Edit
-                  tfcmanagedmachinepool_types.go to remove/update
+              autoApply:
+                description: AutoApply configures if plans should be applied straight
+                  away or manually approved in the Terraform Cloud UI
+                type: boolean
+              module:
+                description: Module is the Terraform module to use for provisioning
+                  the Kubernetes Cluster
+                properties:
+                  source:
+                    description: Source is the Terraform Registry or HTTP URL of the
+                      module source
+                    type: string
+                  version:
+                    description: Version is the semantic version of the Terraform
+                      Module
+                    type: string
+                required:
+                - source
+                - version
+                type: object
+              organization:
+                description: Organization is the name of the Terraform Cloud organization
+                  to use
                 type: string
+              providerIDList:
+                description: ProviderIDList is a list of cloud provider IDs identifying
+                  the instances.
+                items:
+                  type: string
+                type: array
+              token:
+                description: Token is the API token for accessing Terraform Cloud
+                properties:
+                  secretKeyRef:
+                    description: Selects a key of a secret in the workspace's namespace
+                    properties:
+                      key:
+                        description: The key of the secret to select from.  Must be
+                          a valid secret key.
+                        type: string
+                      name:
+                        description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                          TODO: Add other useful fields. apiVersion, kind, uid?'
+                        type: string
+                      optional:
+                        description: Specify whether the Secret or its key must be
+                          defined
+                        type: boolean
+                    required:
+                    - key
+                    type: object
+                    x-kubernetes-map-type: atomic
+                required:
+                - secretKeyRef
+                type: object
+              variables:
+                description: Variables is the list of variables to supply to the Terraform
+                  module which creates the Kubernetes Cluster
+                items:
+                  description: Variable is a Terraform Variable
+                  properties:
+                    name:
+                      description: Name is the name of the variable
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+              workspace:
+                description: 'Workspace is the name of the Terraform Cloud Workspace
+                  to execute the terraform run in TODO: change this to a struct that
+                  supports ID or name'
+                type: string
+            required:
+            - autoApply
+            - module
+            - organization
+            - token
+            - variables
+            - workspace
             type: object
           status:
             description: TFCManagedMachinePoolStatus defines the observed state of
               TFCManagedMachinePool
+            properties:
+              ready:
+                type: boolean
+              terraform:
+                description: TerraformStatus defines status information about the
+                  terraform workspace
+                properties:
+                  configurationHash:
+                    type: string
+                  configurationVersionID:
+                    type: string
+                  runFinishedAt:
+                    format: date-time
+                    type: string
+                  runID:
+                    description: subresource for TerraformRun
+                    type: string
+                  runStartedAt:
+                    format: date-time
+                    type: string
+                  runStatus:
+                    type: string
+                type: object
             type: object
         type: object
     served: true

@@ -70,7 +70,33 @@ output "kubeconfig" {
   }
 `
 
-func createTerraformConfiguration(tpl string, objectData any, ownerData any) (string, string, error) {
+const managedMachinePoolConfigurationTemplate = `
+{{- if .Object.Spec.Variables }}
+  {{ range $v := .Object.Spec.Variables }}
+variable "{{ $v.Name }}" {}
+  {{- end}}
+{{- end }}
+
+module "machine_pool" {
+  source = "{{ .Object.Spec.Module.Source }}"
+{{- if .Object.Spec.Module.Version }}
+  version = "{{ .Object.Spec.Module.Version }}"
+{{- end }}
+{{- if .Object.Spec.Variables }}
+  {{ range $v := .Object.Spec.Variables }}
+    {{ $v.Name }} = var.{{ $v.Name }}
+  {{- end }}
+{{- end }}
+
+  replicas = {{ .Owner.Spec.Replicas }}
+}
+
+output "provider_id_list" {
+  value = module.machine_pool.provider_id_list
+}
+`
+
+func createTerraformConfiguration(tpl string, objectData any, ownerObjectData any) (string, string, error) {
 	td, err := os.MkdirTemp("", "tf-*")
 	if err != nil {
 		return "", "", err
@@ -86,7 +112,7 @@ func createTerraformConfiguration(tpl string, objectData any, ownerData any) (st
 	}
 	err = t.Execute(f, struct{ Object, Owner any }{
 		Object: objectData,
-		Owner:  ownerData,
+		Owner:  ownerObjectData,
 	})
 	if err != nil {
 		return "", "", err

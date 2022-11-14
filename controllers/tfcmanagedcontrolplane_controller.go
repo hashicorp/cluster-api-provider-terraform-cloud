@@ -61,7 +61,7 @@ type TFCManagedControlPlaneReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
 func (r *TFCManagedControlPlaneReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
-	logger.Info("Reconciling Terraform Cloud Cluster")
+	logger.Info("Reconciling TFCManagedControlPlane")
 
 	// get the TFCManagedControlPlane object
 	var cluster infrastructurev1alpha1.TFCManagedControlPlane
@@ -78,13 +78,15 @@ func (r *TFCManagedControlPlaneReconciler) Reconcile(ctx context.Context, req ct
 	ownerCluster, err := util.GetOwnerCluster(ctx, r.Client, cluster.ObjectMeta)
 	if err != nil {
 		logger.Error(err, "Could not find Cluster object")
-		return ctrl.Result{}, err
+		return ctrl.Result{}, nil
+	}
+	if ownerCluster == nil {
+		logger.Info("Cluster object not ready yet")
+		return ctrl.Result{}, nil
 	}
 
 	// add controller finalizer
 	addFinalizer(ctx, r.Client, &cluster, tfcManagedControlPlaneFinalizer)
-
-	// TODO: trigger new run when spec is changed
 
 	// read the token secret
 	var tokenSecret corev1.Secret
@@ -119,9 +121,9 @@ func (r *TFCManagedControlPlaneReconciler) Reconcile(ctx context.Context, req ct
 
 			// trigger destroy run
 			_, err := tfcClient.Runs.Create(ctx, tfc.RunCreateOptions{
-				Message:   tfc.String(fmt.Sprintf("%s: Destroy Cluster %q", terraformCloudRunMessage, cluster.ObjectMeta.Name)),
+				Message:   tfc.String(fmt.Sprintf("%s: Destroy Control Plane %q", terraformCloudRunMessage, cluster.ObjectMeta.Name)),
 				Workspace: workspace,
-				AutoApply: tfc.Bool(cluster.Spec.AutoApply),
+				AutoApply: tfc.Bool(true),
 				IsDestroy: tfc.Bool(true),
 			})
 			if err != nil {
@@ -206,9 +208,9 @@ func (r *TFCManagedControlPlaneReconciler) Reconcile(ctx context.Context, req ct
 		// trigger a new run
 		logger.Info("Triggering Terraform Cloud Run")
 		run, err := tfcClient.Runs.Create(ctx, tfc.RunCreateOptions{
-			Message:              tfc.String(fmt.Sprintf("%s: Reconcile Cluster %q", terraformCloudRunMessage, cluster.ObjectMeta.Name)),
+			Message:              tfc.String(fmt.Sprintf("%s: Reconcile Control Plane %q", terraformCloudRunMessage, cluster.ObjectMeta.Name)),
 			Workspace:            workspace,
-			AutoApply:            tfc.Bool(cluster.Spec.AutoApply),
+			AutoApply:            tfc.Bool(true),
 			ConfigurationVersion: cv,
 		})
 		if err != nil {

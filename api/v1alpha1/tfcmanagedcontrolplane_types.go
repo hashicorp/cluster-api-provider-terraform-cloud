@@ -100,6 +100,8 @@ type TerraformStatus struct {
 //+kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.spec.version`
 //+kubebuilder:printcolumn:name="Organization",type=string,JSONPath=`.spec.workspace`
 //+kubebuilder:printcolumn:name="Workspace",type=string,JSONPath=`.spec.organization`
+//+kubebuilder:printcolumn:name="Module",type=string,JSONPath=`.spec.module.source`
+//+kubebuilder:printcolumn:name="Module Version",type=string,JSONPath=`.spec.module.version`
 //+kubebuilder:printcolumn:name="Run Status",type=string,JSONPath=`.status.terraform.runStatus`
 
 // TFCManagedControlPlane is the Schema for the tfcmanagedcontrolplanes API

@@ -25,21 +25,42 @@ import (
 
 // TFCManagedMachinePoolSpec defines the desired state of TFCManagedMachinePool
 type TFCManagedMachinePoolSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Organization is the name of the Terraform Cloud organization to use
+	Organization string `json:"organization"`
 
-	// Foo is an example field of TFCManagedMachinePool. Edit tfcmanagedmachinepool_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Workspace is the name of the Terraform Cloud Workspace to execute the terraform run in
+	// TODO: change this to a struct that supports ID or name
+	Workspace string `json:"workspace"`
+
+	// Token is the API token for accessing Terraform Cloud
+	Token Token `json:"token"`
+
+	// Module is the Terraform module to use for provisioning the Kubernetes Cluster
+	Module TerraformModule `json:"module"`
+
+	// AutoApply configures if plans should be applied straight away or manually approved in the Terraform Cloud UI
+	AutoApply bool `json:"autoApply"`
+
+	// Variables is the list of variables to supply to the Terraform module which creates the Kubernetes Cluster
+	Variables []Variable `json:"variables"`
+
+	// ProviderIDList is a list of cloud provider IDs identifying the instances.
+	ProviderIDList []string `json:"providerIDList,omitempty"`
 }
 
 // TFCManagedMachinePoolStatus defines the observed state of TFCManagedMachinePool
 type TFCManagedMachinePoolStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Ready     bool            `json:"ready,omitempty"`
+	Terraform TerraformStatus `json:"terraform,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="Organization",type=string,JSONPath=`.spec.workspace`
+//+kubebuilder:printcolumn:name="Workspace",type=string,JSONPath=`.spec.organization`
+//+kubebuilder:printcolumn:name="Module",type=string,JSONPath=`.spec.module.source`
+//+kubebuilder:printcolumn:name="Module Version",type=string,JSONPath=`.spec.module.version`
+//+kubebuilder:printcolumn:name="Run Status",type=string,JSONPath=`.status.terraform.runStatus`
 
 // TFCManagedMachinePool is the Schema for the tfcmanagedmachinepools API
 type TFCManagedMachinePool struct {
