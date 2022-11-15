@@ -15,10 +15,10 @@ The [Cluster API](https://github.com/kubernetes-sigs/cluster-apiterra) project b
 
 ## Supported Cluster API contracts
 
-The provider currently implements the contracts that allow the infrastructure for managed clusters and machine pools to be provisioned. 
+The provider currently implements the contracts that allow the infrastructure for [managed clusters and machine pools](./docs/managedclusters.md) to be provisioned. 
 
-- [Cluster](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/cluster.html) and [Control Plane](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/control-plane.html) are fulfilled by TFCManagedControlPlane  
-- [MachinePool](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/machine-pool.html) is fulfilled by TFCManagedMachinePool 
+- [Cluster](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/cluster.html) and [Control Plane](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/control-plane.html) are fulfilled by [TFCManagedControlPlane](./docs/managedclusters.md#TFCManagedControlPlane)  
+- [MachinePool](https://cluster-api.sigs.k8s.io/developer/architecture/controllers/machine-pool.html) is fulfilled by [TFCManagedMachinePool](./docs/managedclusters.md#TFCManagedMachinePool)
 
 
 ## Getting Started
