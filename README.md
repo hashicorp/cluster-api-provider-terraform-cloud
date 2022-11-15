@@ -5,7 +5,7 @@
 # Kubernetes Cluster API Provider for Terraform Cloud
 
 > **Warning**
-> Please note that this is a technical preview and is for experimental purposes only 
+> Please note that this is a technical preview and is for experimental purposes only. Please [open issues](https://github.com/hashicorp/cluster-api-provider-terraform-cloud/issues) generously if you have feedback.
 
 Kubernetes-native declarative infrastructure using Terraform Cloud.
 
@@ -23,15 +23,15 @@ The provider currently implements the contracts that allow the infrastructure fo
 
 ## Getting Started
 
-You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
-**Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
+You’ll need a Kubernetes cluster to run against. You can use [kind](https://sigs.k8s.io/kind) or [minikube](https://minikube.sigs.k8s.io/docs/start/) to get a local cluster up and running.
+
 
 ### Running on the cluster
 
-1. Install Instances of Custom Resources:
+1. Install CRDs into the cluster
 
 ```sh
-kubectl apply -f config/samples/
+make install
 ```
 
 2. Build and push your image to the location specified by `IMG`:
@@ -46,6 +46,16 @@ make docker-build docker-push IMG=<some-registry>/cluster-api-provider-terraform
 make deploy IMG=<some-registry>/cluster-api-provider-terraform-cloud:tag
 ```
 
+## Running locally 
+
+> **NOTE: When run locally controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).**
+
+For development purposes you can run the controller locally by running:
+
+```sh
+make run 
+```
+
 ### Uninstall CRDs
 
 To delete the CRDs from the cluster:
@@ -55,38 +65,25 @@ make uninstall
 ```
 
 ### Undeploy controller
-UnDeploy the controller to the cluster:
+
+Remove the controller to the cluster:
 
 ```sh
 make undeploy
 ```
 
-## Contributing
-
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
 ### How it works
-This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+
+This project follows the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 
 It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) 
-which provides a reconcile function responsible for synchronizing resources untile the desired state is reached on the cluster 
+which provides a reconcile function responsible for synchronizing resources until a desired state is reached.
 
-### Test It Out
-1. Install the CRDs into the cluster:
+In the case of this provider, the controllers will trigger runs inside [Terraform Cloud](https://cloud.hashicorp.com/products/terraform) using [Terraform Modules](https://developer.hashicorp.com/terraform/language/modules) configured in the API resource. The controller will monitor the Terraform Cloud run until is it finished and collect the outputs, using them to fulfill the [Cluster API contract](https://cluster-api.sigs.k8s.io/developer/providers/contracts.html) of that particular resource. 
 
-```sh
-make install
-```
-
-2. Run your controller (this will run in the foreground, so switch to a new terminal if you want to leave it running):
-
-```sh
-make run
-```
-
-**NOTE:** You can also run this in one step by running: `make install run`
 
 ### Modifying the API definitions
+
 If you are editing the API definitions, generate the manifests such as CRs or CRDs using:
 
 ```sh
@@ -95,21 +92,17 @@ make manifests
 
 **NOTE:** Run `make --help` for more information on all potential `make` targets
 
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html) and [Cluster API Documentation](https://cluster-api.sigs.k8s.io/developer/providers/implementers-guide/overview.html)
 
-## License
+## Contributing 
 
-Copyright 2022.
+This project is highly experimental and we welcome contributions in the form of opening issues and pull requests. You can also come and talk to us in `#terraform-providers` on the [Kubernetes Slack](http://slack.kubernetes.io). 
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Contributors should refer to our [Code of Conduct](.github/CODE_OF_CONDUCT.md)
 
-    http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+## Security Reporting
 
+If you think you've found a security vulnerability, we'd love to hear from you.
+
+Follow the instructions in [SECURITY.md](.github/SECURITY.md) to make a report.
