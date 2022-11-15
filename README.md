@@ -11,7 +11,7 @@ Kubernetes-native declarative infrastructure using Terraform Cloud.
 
 ## What is the Cluster API Provider for Terraform Cloud?
 
-The [Cluster API](https://github.com/kubernetes-sigs/cluster-apiterra) project brings declarative Kubernetes-style APIs to cluster creation, configuration and management. This provider allows you to create [Terraform Modules](https://developer.hashicorp.com/terraform/language/modules) to implement Cluster API's contracts and run them in [Terraform Cloud](https://cloud.hashicorp.com/products/terraform) to provision the infrastructure using Kubernetes as your source of truth.  
+The [Cluster API](https://github.com/kubernetes-sigs/cluster-api) project brings declarative Kubernetes-style APIs to cluster creation, configuration and management. This provider allows you to create [Terraform Modules](https://developer.hashicorp.com/terraform/language/modules) to implement Cluster API's contracts and run them in [Terraform Cloud](https://cloud.hashicorp.com/products/terraform) to provision the infrastructure using Kubernetes as your source of truth.  
 
 ## Supported Cluster API contracts
 
