@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 data "google_service_account" "sa" {
   account_id = "tfc-k8s-cluster-${var.cluster_name}"
 }
