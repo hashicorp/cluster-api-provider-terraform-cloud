@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 data "google_compute_zones" "available" {}
 
 data "google_container_engine_versions" "supported" {
